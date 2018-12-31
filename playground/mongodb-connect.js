@@ -12,7 +12,7 @@ const dbUrl = "mongodb://localhost:27017/ToDoApp" ;
 MongoClient.connect(dbUrl, {useNewUrlParser: true}, (err, client) => {
     if (err) {
         // return statement prevents the rest of the function from executing
-        return console.log("Unable to connect to mongodb server");
+        return console.log("Unable to connect to mongodb server", err);
     }
     console.log("Connected to mongodb server");
 
