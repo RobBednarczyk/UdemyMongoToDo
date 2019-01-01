@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var {mongoose} = require("./db/mongoose");
 var {Todo} = require("./models/todo");
 var {User} = require("./models/user");
+const {ObjectID} = require("mongodb");
 
 var app = express();
 
@@ -32,6 +33,40 @@ app.get("/todos", (req, res) => {
         res.status(400).send(err);
     })
 });
+
+// GET id using async await
+app.get("/todos/:id", async (req, res) => {
+    var id = req.params.id;
+    // bad client request
+    if (!ObjectID.isValid(id)) {
+        return res.status(400).send({});
+    }
+    try {
+        let doc = await Todo.findById(id);
+        doc ? res.send(doc) : res.status(404).send();
+    } catch (err) {
+        res.status(404).send();
+    }
+
+});
+
+// GET id using promises
+// app.get("/todos/:id", (req, res) => {
+//     var id = req.params.id;
+//     if (!ObjectID.isValid(id)) {
+//         return res.status(400).send({});
+//     }
+//     Todo.findById(id).then((doc) => {
+//         doc ? res.send(doc) : res.status(404).send();
+//     }, (err) => {
+//         res.status(404).send();
+//     })
+//     OR
+//     Todo.findById(id).then((doc) => {
+//         doc ? res.send(doc) : res.status(404).send();
+//     }).catch((e) => {
+//      res.status(404).send();
+//     })
 
 app.listen(3000, () => {
     console.log("Started on port 3000");
