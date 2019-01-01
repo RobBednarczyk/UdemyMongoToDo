@@ -10,6 +10,7 @@ var userSchema = new mongoose.Schema({
     }
 });
 
+// compile user schema
 var User = mongoose.model("User", userSchema);
 
 module.exports = {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// define todo schema
 var todoSchema = new mongoose.Schema({
     text: {
         type: String,
@@ -18,6 +19,7 @@ var todoSchema = new mongoose.Schema({
     },
 });
 
+// compile todo schema
 var Todo = mongoose.model("Todo", todoSchema);
 
 module.exports = {
