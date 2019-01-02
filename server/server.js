@@ -75,6 +75,20 @@ app.listen(port, () => {
     console.log(`Started on port ${port}`);
 });
 
+app.delete("/todos/:id", async (req, res) => {
+    var id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(400).send({text: "ObjectId not valid"});
+    }
+    try {
+        let removedDoc = await Todo.findByIdAndRemove(id);
+        removedDoc ? res.status(200).send(removedDoc) : res.status(404).send({text: "Could not delete document"});
+    } catch(err) {
+        res.status(400).send({text: "There was a problem"});
+    }
+
+})
+
 module.exports = {
     app,
 }
