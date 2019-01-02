@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 // set the mongoose to use promises
 mongoose.Promise = global.Promise;
 // connect to the db
-mongoose.connect("mongodb://localhost:27017/ToDoApp", {useNewUrlParser: true});
+// check if there is a db on heroku; if not use the localhost uri
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ToDoApp", {useNewUrlParser: true});
 
 module.exports = {
     mongoose,
