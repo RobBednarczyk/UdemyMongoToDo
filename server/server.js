@@ -46,7 +46,7 @@ app.get("/todos/:id", async (req, res) => {
     }
     try {
         let doc = await Todo.findById(id);
-        doc ? res.send(doc) : res.status(404).send();
+        doc ? res.send({todo: doc}) : res.status(404).send();
     } catch (err) {
         res.status(404).send();
     }
@@ -82,7 +82,7 @@ app.delete("/todos/:id", async (req, res) => {
     }
     try {
         let removedDoc = await Todo.findByIdAndRemove(id);
-        removedDoc ? res.status(200).send(removedDoc) : res.status(404).send({text: "Could not delete document"});
+        removedDoc ? res.status(200).send({todo: removedDoc}) : res.status(404).send({text: "Could not delete document"});
     } catch(err) {
         res.status(400).send({text: "There was a problem"});
     }
