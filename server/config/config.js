@@ -1,5 +1,6 @@
 var env = process.env.NODE_ENV || "development";
 
+// heroku sets the process.env.NODE_ENV = "production" by default
 console.log("Env *****", env);
 
 if (env === "development") {
