@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const bcrypt = require("bcryptjs");
 
 // define user schema
 var userSchema = new mongoose.Schema({
@@ -90,6 +91,26 @@ userSchema.statics.findByToken = function(token) {
     })
 
 }
+
+// use mongoose midleware - run some code before an event
+userSchema.pre("save", async function (next) {
+    var user = this;
+    // only hash the password once
+    if (user.isModified("password")) {
+    try {
+        var salt = await bcrypt.genSalt(10);
+        var hash = await bcrypt.hash(user.password, salt);
+        user.password = hash;
+        next();
+    } catch(e) {
+        console.log("Error while hashing password");
+        next();
+    }
+    } else {
+        next();
+    }
+
+})
 
 // compile user schema
 var User = mongoose.model("User", userSchema);
