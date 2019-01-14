@@ -66,6 +66,31 @@ userSchema.methods.generateAuthToken = async function() {
 
 }
 
+// define a model method
+userSchema.statics.findByToken = function(token) {
+    // model methods get called with the model as "this" binding
+    var User = this;
+    var decoded;
+
+    try {
+        decoded = jwt.verify(token, "abc123");
+    } catch(error) {
+        // return a promise that always rejects
+        // return new Promise((resolve, reject) => {
+        //     reject();
+        // });
+        return Promise.reject("Error: token not verified");
+    }
+
+    return User.findOne({
+        _id: decoded._id,
+        // quotes are required when there's a dot in the value
+        "tokens.token": token,
+        "tokens.access": "auth",
+    })
+
+}
+
 // compile user schema
 var User = mongoose.model("User", userSchema);
 

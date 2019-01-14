@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 var {mongoose} = require("./db/mongoose");
 var {Todo} = require("./models/todo");
 var {User} = require("./models/user");
+var {authenticate} = require("./middleware/authenticate.js");
 const {ObjectID} = require("mongodb");
 
 var app = express();
@@ -129,6 +130,28 @@ app.post("/users", async (req, res) => {
         res.status(400).send(err);
     }
 });
+
+
+
+// create a new private route - using middleware authenticate
+app.get("/users/me", authenticate,  async (req, res) => {
+    // req.header - getting value from header
+    // var token = req.header("x-auth");
+    // try {
+    //     let user = await User.findByToken(token);
+    //     // if there is no user
+    //     if (!user) {
+    //         // return Promise.reject();
+    //         res.status(401).send();
+    //     }
+    //
+    //     res.send(user);
+    // } catch(error) {
+    //     res.status(401).send({error});
+    // }
+    res.send(req.user);
+
+})
 
 app.listen(port, () => {
     console.log(`Started on port ${port}`);
