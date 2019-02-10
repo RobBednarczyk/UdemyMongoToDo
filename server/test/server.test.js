@@ -224,11 +224,16 @@ describe("POST /users/", () => {
             if (err) {
                 return done(err);
             }
-            let user = await User.findOne({email});
-            expect(user).toBeTruthy();
-            // the password should be hashed
-            expect(user.password).not.toBe(password);
-            done();
+            try {
+                let user = await User.findOne({email});
+                expect(user).toBeTruthy();
+                // the password should be hashed
+                expect(user.password).not.toBe(password);
+                done();
+            } catch (err) {
+                done(err);
+            }
+
         });
     });
 
@@ -251,4 +256,61 @@ describe("POST /users/", () => {
         .expect(400)
         .end(done)
     });
-})
+});
+
+describe("POST /users/login", () => {
+
+    it("should login user and return auth token", (done) => {
+        request(app)
+        .post("/users/login")
+        .send({
+            email: users[1].email,
+            password: users[1].password
+        })
+        .expect(200)
+        .expect((res) => {
+            expect(res.headers["x-auth"]).toBeTruthy();
+        })
+        .end(async (err, res) => {
+            if (err) {
+                return done(err);
+            }
+            try {
+                let user = await User.findById(users[1]._id);
+                //console.log(user.tokens[0]);
+                // user1 has only one token
+                expect(user.tokens[0]).toHaveProperty("access", "auth");
+                expect(user.tokens[0]).toHaveProperty("token", res.headers["x-auth"]);
+                done();
+            } catch (err) {
+                done(err);
+            }
+
+        })
+    });
+
+    it("should reject invalid login", (done) => {
+        request(app)
+        .post("/users/login")
+        .send({
+            email: users[1].email,
+            password: "deliberatlyWrongPassword"
+        })
+        .expect(400)
+        .expect((res) => {
+            expect(res.headers["x-auth"]).not.toBeTruthy();
+        })
+        .end(async (err, res) => {
+            if (err) {
+                return done(err);
+            }
+            try {
+                let user = await User.findById(users[1]._id);
+                expect(user.tokens.length).toBe(0);
+                done();
+            } catch(err) {
+                done(err);
+            }
+        })
+    });
+});
