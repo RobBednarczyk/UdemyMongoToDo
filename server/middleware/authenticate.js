@@ -12,7 +12,7 @@ var authenticate = async (req, res, next) => {
         }
 
         //res.send(user);
-        // modify the request object
+        // modify the request object using the middleware - i.e before running the route
         req.user = user;
         req.token = token;
         next();

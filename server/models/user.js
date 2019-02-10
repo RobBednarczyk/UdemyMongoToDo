@@ -48,6 +48,7 @@ userSchema.methods.toJSON = function() {
 
 // object - instance methods
 userSchema.methods.generateAuthToken = async function() {
+    // access the individual document that the method was called on
     var user = this;
     var access = "auth";
     // sign the payload - data using the secret salt
@@ -61,9 +62,11 @@ userSchema.methods.generateAuthToken = async function() {
     user.tokens = user.tokens.concat([{access, token}]);
 
     // promises
-    return user.save().then(() => {
-        return token;
-    });
+    // return user.save().then(() => {
+    //     return token;
+    // });
+    await user.save();
+    return token;
 
 }
 
@@ -71,10 +74,10 @@ userSchema.methods.generateAuthToken = async function() {
 userSchema.statics.findByToken = function(token) {
     // model methods get called with the model as "this" binding
     var User = this;
-    var decoded;
+    // var decoded;
 
     try {
-        decoded = jwt.verify(token, "abc123");
+        var decoded = jwt.verify(token, "abc123");
     } catch(error) {
         // return a promise that always rejects
         // return new Promise((resolve, reject) => {
@@ -84,6 +87,7 @@ userSchema.statics.findByToken = function(token) {
     }
 
     return User.findOne({
+        // id and tokens.token = token and tokens.access = "auth"
         _id: decoded._id,
         // quotes are required when there's a dot in the value
         "tokens.token": token,
@@ -92,7 +96,7 @@ userSchema.statics.findByToken = function(token) {
 
 }
 
-// use mongoose midleware - run some code before an event
+// use mongoose midleware - run some code before an event (doc is saved)
 userSchema.pre("save", async function (next) {
     var user = this;
     // only hash the password once
