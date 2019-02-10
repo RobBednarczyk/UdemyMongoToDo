@@ -72,7 +72,7 @@ userSchema.methods.generateAuthToken = async function() {
 
 userSchema.methods.removeToken = function(token) {
     var user = this;
-    return user.update({
+    return user.updateOne({
         $pull: {
             // remove the whole item if token matches
             tokens: {token}
