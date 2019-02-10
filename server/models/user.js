@@ -70,6 +70,16 @@ userSchema.methods.generateAuthToken = async function() {
 
 }
 
+userSchema.methods.removeToken = function(token) {
+    var user = this;
+    return user.update({
+        $pull: {
+            // remove the whole item if token matches
+            tokens: {token}
+        }
+    });
+}
+
 // define a model method
 userSchema.statics.findByToken = function(token) {
     // model methods get called with the model as "this" binding
@@ -133,6 +143,7 @@ userSchema.statics.findByCredentials = async function (email, password) {
     return user;
 
 };
+
 
 // use mongoose midleware - run some code before an event (doc is saved)
 userSchema.pre("save", async function (next) {
