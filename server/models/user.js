@@ -94,7 +94,45 @@ userSchema.statics.findByToken = function(token) {
         "tokens.access": "auth",
     })
 
-}
+};
+
+// define a model method
+userSchema.statics.findByCredentials = async function (email, password) {
+    // var User = this;
+    // try {
+    //     var user = await User.findOne({email});
+    // } catch (e) {
+    //     console.log("Error: ", e)
+    // }
+    //
+    // try {
+    //     // As of bcryptjs 2.4.0, compare returns a promise if callback is omitted:
+    //     var passValid = await bcrypt.compare(password, user.password);
+    // } catch (e) {
+    //     console.log("Error: ", e)
+    // }
+    //
+    // if (!(user && passValid)) {
+    //     // return a rejected promise to be processed by the route in server.js
+    //     return Promise.reject();
+    // }
+    // return user;
+    var User = this;
+    try {
+        var user = await User.findOne({email});
+        // As of bcryptjs 2.4.0, compare returns a promise if callback is omitted:
+        var passValid = await bcrypt.compare(password, user.password);
+    } catch (e) {
+        console.log("Error: ", e)
+    }
+
+    if (!(user && passValid)) {
+        // return a rejected promise to be processed by the route in server.js
+        return Promise.reject();
+    }
+    return user;
+
+};
 
 // use mongoose midleware - run some code before an event (doc is saved)
 userSchema.pre("save", async function (next) {
