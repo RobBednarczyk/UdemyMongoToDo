@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 // configure routes
 // make it a private route - only logged in users can add new todos
 app.post("/todos", authenticate, async (req, res) => {
-    //console.log(req.body);
+
     var todo = new Todo({
         text: req.body.text,
         _creator: req.user._id,

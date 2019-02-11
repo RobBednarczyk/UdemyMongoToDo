@@ -52,7 +52,7 @@ userSchema.methods.generateAuthToken = async function() {
     var user = this;
     var access = "auth";
     // sign the payload - data using the secret salt
-    var token = jwt.sign({_id: user._id.toHexString(), access}, "abc123").toString();
+    var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
 
     // old version
     // user.tokens.push({
@@ -87,7 +87,7 @@ userSchema.statics.findByToken = function(token) {
     // var decoded;
 
     try {
-        var decoded = jwt.verify(token, "abc123");
+        var decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch(error) {
         // return a promise that always rejects
         // return new Promise((resolve, reject) => {
