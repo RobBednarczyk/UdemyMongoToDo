@@ -17,6 +17,12 @@ var todoSchema = new mongoose.Schema({
         type: Number,
         default: null,
     },
+    // create an object variable - link to user
+    _creator: {
+        // type - id of a user
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    }
 });
 
 // compile todo schema
